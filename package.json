@@ -13,7 +13,7 @@
   "dependencies": {
     "@ethersproject/abstract-provider": "^5.1.0",
     "@ethersproject/constants": "^5.1.0",
-    "@openzeppelin/contracts": "^3.4.1",
+    "@openzeppelin/contracts": "^3.4.1"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.2",
