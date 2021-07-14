@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.6.12;
+pragma experimental ABIEncoderV2;
 
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-// import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "./ERC721.sol";
 
 contract NFT is ERC721, Ownable {
     // Incremental id of the next minted token
-    uint private _nextTokenId;
+    uint private _nextTokenId = 1;
 
     //TODO: should this timestamp be private?
     // A tokenURI became visible after this timestamp
@@ -18,53 +18,42 @@ contract NFT is ERC721, Ownable {
     constructor(
         string memory name,
         string memory symbol,
-        string memory baseUri,
         string memory contractUri,
         string memory stubURI,
-        uint timestamp,
-        uint tokenAmountForOwner,
-        uint tokenAmountForRecipient,
-        address recipient
+        string[] memory ownerTokensURIs,
+        string[] memory recipientTokensURIs,
+        address recipient,
+        uint timestamp
     ) public ERC721(name, symbol) {
-        uint nextTokenId = 1;
-        for (; nextTokenId <= tokenAmountForOwner; nextTokenId++) {
-            _mint(msg.sender, nextTokenId);
+        for (uint i = 0; i < ownerTokensURIs.length; i++) {
+            mint(msg.sender, ownerTokensURIs[i]);
         }
-        for (; nextTokenId <= tokenAmountForRecipient; nextTokenId++) {
-            _mint(recipient, nextTokenId);
+        for (uint i = 0; i < recipientTokensURIs.length; i++) {
+            mint(recipient, recipientTokensURIs[i]);
         }
-        _nextTokenId = nextTokenId;
-        _setBaseURI(baseUri);
         _stubURI = stubURI;
         _contractURI = contractUri;
         _timestamp = timestamp;
     }
 
-    function mint(address to)
+    function mint(address to, string memory tokenURI)
         public
         onlyOwner
         returns (uint tokenId)
     {
         tokenId = _nextTokenId;
         _mint(to, tokenId);
+        _setTokenURI(tokenId, tokenURI);
         _nextTokenId++;
     }
 
     function tokenURI(uint tokenId) public view override returns (string memory) {
         require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");
 
-        //TODO: should be blackBoxURI here?
-        // Concatenate the tokenID to the baseURI and show it if the `_timestamp` is earlier than `now` else show a stub
-        return _timestamp <= now ?
-            string(abi.encodePacked(baseURI(), tokenId.toString(), ".json")) : _stubURI;
+        // Show a tokenURI of a token if the `_timestamp` is earlier than `now` else show a stub
+        return _timestamp <= now ? _tokenURIs[tokenId] : _stubURI;
     }
 
-    // Override it to hide the `_baseURI` value until the `_timestamp`
-    function baseURI() public view override returns (string memory) {
-        return _timestamp <= now ? ERC721.baseURI() : _stubURI;
-    }
-
-    //TODO: should this value be hidden?
     function contractURI() public view returns (string memory) {
         return _contractURI;
     }
