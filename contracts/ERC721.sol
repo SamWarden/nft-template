@@ -3,10 +3,10 @@
 pragma solidity >=0.6.0 <0.8.0;
 
 import "@openzeppelin/contracts/utils/Context.sol";
-import "@openzeppelin/contracts/tokens/ERC721/IERC721.sol";
-import "@openzeppelin/contracts/tokens/ERC721/IERC721Metadata.sol";
-import "@openzeppelin/contracts/tokens/ERC721/IERC721Enumerable.sol";
-import "@openzeppelin/contracts/tokens/ERC721/IERC721Receiver.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721Metadata.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721Enumerable.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 import "@openzeppelin/contracts/introspection/ERC165.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
@@ -48,7 +48,7 @@ contract ERC721 is Context, ERC165, IERC721, IERC721Metadata, IERC721Enumerable 
     string private _symbol;
 
     // Optional mapping for token URIs
-    mapping (uint256 => string) private _tokenURIs;
+    mapping (uint256 => string) internal _tokenURIs;
 
     // Base URI
     string private _baseURI;
